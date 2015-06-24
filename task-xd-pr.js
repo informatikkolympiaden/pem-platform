@@ -380,6 +380,12 @@ var PmInterface = {
 
          var msg = new Message(request, content, null, messageId, task.proxyId);
          $.postMessage(msg, task.getTargetUrl(), task.getTarget());
+         // looping until id is really set
+         if (request === 'setId' && task.idSet !== true) {
+            setTimeout(function() {
+               PmInterface.sendMessage(task, request, content, callback);
+            }, 250);
+         }
       }
    },
 
