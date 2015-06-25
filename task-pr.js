@@ -24,15 +24,15 @@
 var TaskProxyManager = {
    tasks: {},
    platforms: {}, 
-   getTaskProxy: function(idFrame, force) {
+   getTaskProxy: function(idFrame, callback, force) {
       if (!force && TaskProxyManager.tasks[idFrame]) {
-         return TaskProxyManager.tasks[idFrame];
+         callback(TaskProxyManager.tasks[idFrame]);
       } else {
          $('#'+idFrame).each(function() {
             var curTask = new Task($(this));
             TaskProxyManager.tasks[idFrame] = curTask;
          });
-         return TaskProxyManager.tasks[idFrame];
+         callback(TaskProxyManager.tasks[idFrame]);
       }
    },
    setPlatform: function(task, platform) {
