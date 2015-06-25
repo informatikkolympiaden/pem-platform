@@ -24,20 +24,20 @@
 var TaskProxyManager = {
    tasks: {},
    platforms: {},
-   getTaskProxy: function(idFrame, force) {
+   getTaskProxy: function(idFrame, callback, force) {
       if (TaskProxyManager.tasks[idFrame] && !force) {
          return TaskProxyManager.tasks[idFrame];
       } else {
+         PmInterface.init();
          $('#'+idFrame).each(function() {
             var idProxy = PmInterface.getRandomID();
-            var curTask = new Task($(this), idProxy);
-            TaskProxyManager.tasks[idFrame] = curTask;
-            if (idFrame in TaskProxyManager.platforms) {
-               curTask.setPlatform(TaskProxyManager.platforms[idFrame]);
-            }
+            TaskProxyManager.tasks[idFrame] = new Task($(this), idProxy, function() {
+               if (idFrame in TaskProxyManager.platforms) {
+                  TaskProxyManager.tasks[idFrame].setPlatform(TaskProxyManager.platforms[idFrame]);
+               }
+               callback(TaskProxyManager.tasks[idFrame]);
+            });
          });
-         PmInterface.init();
-         return TaskProxyManager.tasks[idFrame];
       }
    },
    setPlatform: function(task, platform) {
@@ -60,7 +60,7 @@ var platformDebug = false;
 /*
  * Task object, created from an iframe DOM element
  */
-function Task(iframe, proxyId) {
+function Task(iframe, proxyId, callback) {
    this.iframe = iframe;
    this.proxyId = proxyId;
    this.Id = iframe.attr('id');
@@ -82,8 +82,9 @@ function Task(iframe, proxyId) {
       that.iframe_loaded = true;
       if (!that.idSet && !that.settingId) {
          that.settingId = true;
-         PmInterface.sendMessage(that, 'setId', [that.Id, that.proxyId], function() {
+         PmInterface.sendMessage(that, 'setId', [that.Id, that.proxyId], function testcallback() {
             that.idSet = true;
+            if (callback) { callback(that); }
          });
       }
    } else {
@@ -93,6 +94,7 @@ function Task(iframe, proxyId) {
             that.settingId = true;
             PmInterface.sendMessage(that, 'setId', [that.Id, that.proxyId], function() {
                that.idSet = true;
+               if (callback) { callback(that); }
             });
          }
       });
@@ -383,7 +385,9 @@ var PmInterface = {
          // looping until id is really set
          if (request === 'setId' && task.idSet !== true) {
             setTimeout(function() {
-               PmInterface.sendMessage(task, request, content, callback);
+               if (request === 'setId' && task.idSet !== true) {
+                  PmInterface.sendMessage(task, request, content, callback);
+               }
             }, 250);
          }
       }
