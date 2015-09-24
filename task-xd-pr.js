@@ -47,6 +47,9 @@ var TaskProxyManager = {
    deleteTaskProxy: function(idFrame) {
       delete(TaskProxyManager.tasks[idFrame]);
       delete(TaskProxyManager.platforms[idFrame]);
+   },
+   getUrl: function(taskUrl, sToken, sPlatform, prefix) {
+      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'#'+window.location.href ;
    }
 };
 
