@@ -267,6 +267,7 @@ var PmInterface = {
     */
    messageCallback: function(e) {
       var message = PmInterface.getMessage(e.data);
+      if (!message) { return; }
       if (platformDebug && message.request !== 'getHeightCallback') {
          console.log('Platform Got from '+message.source+' : ');
          console.log(message);
