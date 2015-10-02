@@ -32,6 +32,9 @@ var TaskProxyManager = {
       if (TaskProxyManager.tasks[idFrame] && !force) {
          return TaskProxyManager.tasks[idFrame];
       } else {
+         if (force) {
+            TaskProxyManager.deleteTaskProxy(idFrame);
+         }
          $('#'+idFrame).each(function() {
             TaskProxyManager.tasks[idFrame] = new Task($(this), function() {
                if (idFrame in TaskProxyManager.platforms) {
@@ -47,6 +50,10 @@ var TaskProxyManager = {
       TaskProxyManager.tasks[task.Id].setPlatform(platform);
    },
    deleteTaskProxy: function(idFrame) {
+      var task = TaskProxyManager.tasks[idFrame];
+      if (task && task.chan) {
+         task.chan.destroy();
+      }
       delete(TaskProxyManager.tasks[idFrame]);
       delete(TaskProxyManager.platforms[idFrame]);
    },
@@ -167,7 +174,7 @@ Task.prototype.updateToken = function(token, success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.updateToken",
       params: token,
-      timeout: 1000,
+      timeout: 10000,
       error: error,
       success: success
    });
@@ -184,7 +191,7 @@ Task.prototype.getMetaData = function(success, error) {
 
 Task.prototype.getAnswer = function(success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
-   this.chan.call({method: "task.getMetaData",
+   this.chan.call({method: "task.getAnswer",
       error: error,
       success: success,
       timeout: 1000
@@ -221,7 +228,7 @@ Task.prototype.reloadState = function(state, success, error) {
 };
 
 Task.prototype.getViews = function(success, error) {
-   if (!error) error = function(errMsg) {console.error(errMsg)};
+   if (!error) error = function() {console.error(arguments)};
    this.chan.call({method: "task.getViews",
       error: error,
       success: success,
