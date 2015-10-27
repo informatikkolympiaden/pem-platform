@@ -177,7 +177,7 @@ Task.prototype.gradeAnswer = function(answer, answerToken, success, error) {
     return taskCaller(this, 'gradeAnswer', [answer, answerToken, success, error]);
 };
 Task.prototype.getResources = function(success, error) {
-    return taskCaller(this, 'gradeResources', [success, error]);
+    return taskCaller(this, 'getResources', [success, error]);
 };
 // for grader.gradeTask
 Task.prototype.gradeTask = function(answer, answerToken, success, error) {
@@ -204,16 +204,18 @@ Platform.prototype.validate = function(mode) {};
 Platform.prototype.showView = function(views) {};
 Platform.prototype.askHint = function(platformToken) {};
 Platform.prototype.updateHeight = function(height) {this.task.iframe.height(parseInt(height)+40);};
-Platform.prototype.getTaskParams = function(key, defaultValue) {
-   var res = {minScore: -3, maxScore: 6, randomSeed: 0, noScore: 0, readOnly: false};
-   if (typeof key !== 'undefined') {
+Platform.prototype.getTaskParams = function(key, defaultValue, success, error) {
+   var res = {minScore: -3, maxScore: 10, randomSeed: 0, noScore: 0, readOnly: false, options: {}};
+   if (key) {
       if (key !== 'options' && key in res) {
-         return this.taskParams[key];
+         res = res[key];
+      } else if (res.options && key in res.options) {
+         res = res.options[key];
       } else {
-         return (typeof defaultValue !== 'undefined') ? defaultValue : null; 
+         res = (typeof defaultValue !== 'undefined') ? defaultValue : null;
       }
    }
-   return res;
+   success(res);
 };
 
 Platform.prototype.openUrl = function(url) {
