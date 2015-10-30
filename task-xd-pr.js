@@ -30,7 +30,7 @@ var TaskProxyManager = {
    },
    getTaskProxy: function(idFrame, callback, force) {
       if (TaskProxyManager.tasks[idFrame] && !force) {
-         return TaskProxyManager.tasks[idFrame];
+         callback(TaskProxyManager.tasks[idFrame]);
       } else {
          if (force) {
             TaskProxyManager.deleteTaskProxy(idFrame);
@@ -76,6 +76,7 @@ var platformDebug = false;
 function Task(iframe, callback) {
    this.iframe = iframe;
    this.Id = iframe.attr('id');
+   this.platformSet = false;
    function getUrlParameterByName(name, url) {
        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
            results = regex.exec(url);
@@ -91,33 +92,39 @@ function Task(iframe, callback) {
    });
    this.setPlatform = function(platform) {
       this.platform = platform;
+      var self = this;
+      if (this.platformSet) {
+         // in this case, the bound functions will call the new platform
+         return;
+      }
       this.chan.bind('platform.validate', function (trans, mode) {
-         platform.validate(mode, trans.complete, trans.error);
+         self.platform.validate(mode, trans.complete, trans.error);
          trans.delayReturn(true);
          console.error('platform.validate with mode '+mode);
       });
       this.chan.bind('platform.getTaskParams', function (trans, keyDefault) {
          var key = keyDefault ? keyDefault[0] : undefined;
          var defaultValue = keyDefault ? keyDefault[1] : undefined;
-         platform.getTaskParams(key, defaultValue, trans.complete, trans.error);
+         self.platform.getTaskParams(key, defaultValue, trans.complete, trans.error);
          trans.delayReturn(true);
       });
       this.chan.bind('platform.showView', function (trans, view) {
-         platform.showView(view, trans.complete, trans.error);
+         self.platform.showView(view, trans.complete, trans.error);
          trans.delayReturn(true);
       });
       this.chan.bind('platform.askHint', function (trans) {
-         platform.askHint(trans.complete, trans.error);
+         self.platform.askHint(trans.complete, trans.error);
          trans.delayReturn(true);
       });
       this.chan.bind('platform.updateHeight', function (trans, height) {
-         platform.updateHeight(height, trans.complete, trans.error);
+         self.platform.updateHeight(height, trans.complete, trans.error);
          trans.delayReturn(true);
       });
       this.chan.bind('platform.openUrl', function (trans, url) {
-         platform.openUrl(url, trans.complete, trans.error);
+         self.platform.openUrl(url, trans.complete, trans.error);
          trans.delayReturn(true);
       });
+      self.platformSet = true;
    };
 }
 
