@@ -122,9 +122,15 @@ function Task(iframe, callback) {
    if (iframeDoc && iframeDoc.readyState  == 'complete' && that.iframe[0].contentWindow.platform && !that.iframe[0].contentWindow.platform.parentLoadedFlag) {
       that.iframe[0].contentWindow.platform.initCallback(that.iframeLoaded);
    } else {
-      $(that.iframe).on("load", function() {
-         that.iframe[0].contentWindow.platform.initCallback(that.iframeLoaded);        
-      });
+      if(document.addEventListener) { // ie > 8
+         $(that.iframe).on("load", function() {
+            that.iframe[0].contentWindow.platform.initCallback(that.iframeLoaded);
+         });
+      } else {
+         setTimeout(function() {
+            that.iframeLoaded();
+         }, 100);
+      }
    }
 }
 
