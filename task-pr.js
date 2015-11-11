@@ -1,62 +1,15 @@
+(function () {
+
 'use strict';
 
 /* 
  * Same domain task proxy implementation for Bebras task API - v1.0 - 08/2014
  *
- * This file implements a "TaskProxyManager" object in the global scope so that
- * platforms using this file can just call 
- * "myTask = TaskProxyManager.getTaskProxy(task_id)" to get the task object
- * associated to a task loaded in an iframe. Then they can just call 
- * "myTask.myFunction()", with function of the API, the task object will take
- * care of message sending and receiving with the actual task.
- * 'task_id' here refers to the "id" attribute of the iframe in which a task is
- * loaded.
- *
- * It depends on jQuery and jschannel.
- *
- * Currently, if you do not use the callback system, you have to make sure
- * iframe is ready before calling functions returning a result. 
- * You can call task.iframe_loaded to know if it is or not.
- * This limitation doesn't apply if you use the callback system.
+ * Depends on jQuery.
  *
  */
 
-var TaskProxyManager = {
-   tasks: {},
-   platforms: {},
-   getTaskProxy: function(idFrame, callback, force) {
-      if (!force && TaskProxyManager.tasks[idFrame]) {
-         callback(TaskProxyManager.tasks[idFrame]);
-      } else {
-         if (force) {
-            TaskProxyManager.deleteTaskProxy(idFrame);
-         }
-         $('#'+idFrame).each(function() {
-            TaskProxyManager.tasks[idFrame] = new Task($(this), function() {setTimeout(function() {
-               if (idFrame in TaskProxyManager.platforms) {
-                  TaskProxyManager.tasks[idFrame].setPlatform(TaskProxyManager.platforms[idFrame]);
-               }
-               callback(TaskProxyManager.tasks[idFrame]);
-            });});
-         });
-      }
-   },
-   setPlatform: function(task, platform) {
-      TaskProxyManager.platforms[task.Id] = platform;
-      TaskProxyManager.tasks[task.Id].setPlatform(platform);
-   },
-   deleteTaskProxy: function(idFrame) {
-      delete(TaskProxyManager.tasks[idFrame]);
-      delete(TaskProxyManager.platforms[idFrame]);
-   },
-   getUrl: function(taskUrl, sToken, sPlatform, prefix) {
-      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform);
-   }
-};
-
-TaskProxyManager.getGraderProxy = TaskProxyManager.getTaskProxy;
-
-var taskCaller = function(task, request, content) {
+function taskCaller(task, request, content) {
    // TODO: handle case where iframe_loaded is false and caller expects a result...
    if (!task.iframe_loaded) {
       setTimeout(function() {
@@ -85,7 +38,8 @@ var taskCaller = function(task, request, content) {
          console.error("Task "+task.Id+" doesn't implement "+request);
       }
    }
-};
+}
+
 
 /*
  * Task object, created from an iframe DOM element
@@ -116,7 +70,7 @@ function Task(iframe, callback) {
          that.distantPlatform.setPlatform(that.platform);
       }
       callback();    
-   }
+   };
    // checking if platform is already available
    var iframeDoc = that.iframe[0].contentDocument || that.iframe[0].contentWindow.document;
    if (iframeDoc && iframeDoc.readyState  == 'complete' && that.iframe[0].contentWindow.platform && !that.iframe[0].contentWindow.platform.parentLoadedFlag) {
@@ -197,6 +151,43 @@ Task.prototype.getResources = function(success, error) {
 Task.prototype.gradeTask = function(answer, answerToken, success, error) {
     return taskCaller(this, 'gradeTask', [answer, answerToken, success, error]);
 };
+
+window.TaskProxyManager = {
+   tasks: {},
+   platforms: {},
+   getTaskProxy: function(idFrame, callback, force) {
+      if (!force && TaskProxyManager.tasks[idFrame]) {
+         callback(TaskProxyManager.tasks[idFrame]);
+      } else {
+         if (force) {
+            TaskProxyManager.deleteTaskProxy(idFrame);
+         }
+         $('#'+idFrame).each(function() {
+            TaskProxyManager.tasks[idFrame] = new Task($(this), function() {setTimeout(function() {
+               if (idFrame in TaskProxyManager.platforms) {
+                  TaskProxyManager.tasks[idFrame].setPlatform(TaskProxyManager.platforms[idFrame]);
+               }
+               callback(TaskProxyManager.tasks[idFrame]);
+            });});
+         });
+      }
+   },
+   setPlatform: function(task, platform) {
+      TaskProxyManager.platforms[task.Id] = platform;
+      TaskProxyManager.tasks[task.Id].setPlatform(platform);
+   },
+   deleteTaskProxy: function(idFrame) {
+      delete(TaskProxyManager.tasks[idFrame]);
+      delete(TaskProxyManager.platforms[idFrame]);
+   },
+   getUrl: function(taskUrl, sToken, sPlatform, prefix) {
+      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform);
+   }
+};
+
+window.TaskProxyManager.getGraderProxy = TaskProxyManager.getTaskProxy;
+
+}());
 
 /*
  * Platform object definition, created from a Task object (see below)
