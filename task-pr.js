@@ -45,6 +45,7 @@ function taskCaller(task, request, content, error) {
          try {
             task.distantTask[request].apply(task.distantTask, content);
          } catch (e) {
+            window.clearTimeout(timeout);
             error(e);
          }
       } else if (task.distantTask) {
