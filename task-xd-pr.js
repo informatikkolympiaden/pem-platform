@@ -152,7 +152,7 @@ Task.prototype.load = function(views, success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.load",
       params: views,
-      timeout: 5000,
+      timeout: 10000,
       success: success,
       error: error
    });
@@ -170,7 +170,7 @@ Task.prototype.unload = function(success, error) {
 Task.prototype.getHeight = function(success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.getHeight",
-      timeout: 50,
+      timeout: 100,
       error: error,
       success: success
    });
