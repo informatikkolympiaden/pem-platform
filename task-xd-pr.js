@@ -112,8 +112,8 @@ function Task(iframe, callback) {
          self.platform.showView(view, trans.complete, trans.error);
          trans.delayReturn(true);
       });
-      this.chan.bind('platform.askHint', function (trans) {
-         self.platform.askHint(trans.complete, trans.error);
+      this.chan.bind('platform.askHint', function (trans, hintToken) {
+         self.platform.askHint(hintToken, trans.complete, trans.error);
          trans.delayReturn(true);
       });
       this.chan.bind('platform.updateHeight', function (trans, height) {
