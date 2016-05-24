@@ -59,7 +59,13 @@ var TaskProxyManager = {
    },
    getUrl: function(taskUrl, sToken, sPlatform, prefix) {
       var channelId = (prefix ? prefix : '')+this.getRandomID();
-      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'&channelId='+encodeURIComponent(channelId);
+      if (taskUrl.indexOf('?') == -1) {
+         // the idea is not to change the base url even if we change token, so we put token after #
+         taskUrl = taskUrl + '?';
+      } else {
+         taskUrl = taskUrl + '&';
+      }
+      return taskUrl+'sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'&channelId='+encodeURIComponent(channelId);
    }
 };
 
