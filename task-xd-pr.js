@@ -1,4 +1,3 @@
-"use strict";
 /*
  * Cross-domain task proxy implementation for Bebras task API - v1.0 - 08/2014
  *
@@ -29,6 +28,7 @@ var TaskProxyManager = {
       return high + low;
    },
    getTaskProxy: function(idFrame, success, force, error) {
+      var errorFun = error ? error : function() {console.error(arguments);}
       if (TaskProxyManager.tasks[idFrame] && !force) {
          success(TaskProxyManager.tasks[idFrame]);
       } else {
@@ -41,7 +41,7 @@ var TaskProxyManager = {
                   TaskProxyManager.tasks[idFrame].setPlatform(TaskProxyManager.platforms[idFrame]);
                }
                success(TaskProxyManager.tasks[idFrame]);
-            }, error);
+            }, errorFun);
          });
       }
    },
