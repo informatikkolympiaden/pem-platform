@@ -277,7 +277,8 @@ Task.prototype.gradeAnswer = function(answer, answerToken, success, error) {
          var argzero = successMonoArg[0];
          var argone  = (successMonoArg.length > 1) ? successMonoArg[1] : null;
          var argtwo  = (successMonoArg.length > 2) ? successMonoArg[2] : null;
-         success(argzero, argone, argtwo);
+         var argthree  = (successMonoArg.length > 3) ? successMonoArg[3] : null;
+         success(argzero, argone, argtwo, argthree);
       } else {
          success(successMonoArg);
       }
