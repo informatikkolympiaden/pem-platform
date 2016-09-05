@@ -28,9 +28,9 @@ var TaskProxyManager = {
       var high = Math.floor(Math.random() * 2000000000).toString();
       return high + low;
    },
-   getTaskProxy: function(idFrame, callback, force) {
+   getTaskProxy: function(idFrame, success, force, error) {
       if (TaskProxyManager.tasks[idFrame] && !force) {
-         callback(TaskProxyManager.tasks[idFrame]);
+         success(TaskProxyManager.tasks[idFrame]);
       } else {
          if (force) {
             TaskProxyManager.deleteTaskProxy(idFrame);
@@ -40,8 +40,8 @@ var TaskProxyManager = {
                if (idFrame in TaskProxyManager.platforms) {
                   TaskProxyManager.tasks[idFrame].setPlatform(TaskProxyManager.platforms[idFrame]);
                }
-               callback(TaskProxyManager.tasks[idFrame]);
-            });
+               success(TaskProxyManager.tasks[idFrame]);
+            }, error);
          });
       }
    },
@@ -79,7 +79,7 @@ var platformDebug = false;
 /*
  * Task object, created from an iframe DOM element
  */
-function Task(iframe, callback) {
+function Task(iframe, success, error) {
    this.iframe = iframe;
    this.Id = iframe.attr('id');
    this.platformSet = false;
@@ -88,12 +88,24 @@ function Task(iframe, callback) {
            results = regex.exec(url);
        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
    }
+   var nbSecs = 0;
+   var checkInterval = setInterval(function() {
+      if (nbSecs > 15) {
+         error();
+         clearInterval(checkInterval);
+         checkInterval = null;
+      }
+      nbSecs = nbSecs + 1;
+   }, 1000);
    this.chan = Channel.build({
       window: iframe[0].contentWindow,
       origin: "*",
       scope: getUrlParameterByName('channelId', iframe[0].src),
       onReady: function() {
-         callback();
+         if (checkInterval) {
+            clearInterval(checkInterval);
+            success();
+         }
       }
    });
    this.setPlatform = function(platform) {
@@ -312,7 +324,7 @@ Platform.prototype.validate = function(mode, success, error) {error('platform.va
 Platform.prototype.showView = function(views, success, error) {error('platform.validate is not defined');};
 Platform.prototype.askHint = function(platformToken, success, error) {error('platform.validate is not defined');};
 Platform.prototype.updateHeight = function(height, success, error) {this.task.iframe.height(parseInt(height)+40);success();};
-Platform.prototype.openUrl = function(url) {error('platform.openUrl is not defined!');};
+Platform.prototype.openUrl = function(url, success, error) {error('platform.openUrl is not defined!');};
 Platform.prototype.getTaskParams = function(key, defaultValue, success, error) {
    var res = {minScore: -3, maxScore: 10, randomSeed: 0, noScore: 0, readOnly: false, options: {}};
    if (key) {
