@@ -49,7 +49,7 @@ function taskCaller(task, request, content, error) {
                task.distantTask[request].apply(task.distantTask, content);
             } catch (e) {
                window.clearTimeout(timeout);
-               error(e);
+               error(e.name+': '+e.message);
             }
          }
       } else if (task.distantTask) {
