@@ -170,7 +170,7 @@ Task.prototype.load = function(views, success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.load",
       params: views,
-      timeout: 10000,
+      timeout: 300000,
       success: success,
       error: error
    });
@@ -179,7 +179,7 @@ Task.prototype.load = function(views, success, error) {
 Task.prototype.unload = function(success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.unload",
-      timeout: 1000,
+      timeout: 2000,
       error: error,
       success: success
    });
@@ -188,7 +188,7 @@ Task.prototype.unload = function(success, error) {
 Task.prototype.getHeight = function(success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.getHeight",
-      timeout: 100,
+      timeout: 500,
       error: error,
       success: success
    });
@@ -207,7 +207,7 @@ Task.prototype.updateToken = function(token, success, error) {
 Task.prototype.getMetaData = function(success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.getMetaData",
-      timeout: 500,
+      timeout: 2000,
       error: error,
       success: success
    });
@@ -218,7 +218,7 @@ Task.prototype.getAnswer = function(success, error) {
    this.chan.call({method: "task.getAnswer",
       error: error,
       success: success,
-      timeout: 1000
+      timeout: 2000
    });
 };
 
@@ -228,7 +228,7 @@ Task.prototype.reloadAnswer = function(answer, success, error) {
       params: answer,
       error: error,
       success: success,
-      timeout: 1000
+      timeout: 2000
    });
 };
 
@@ -237,7 +237,7 @@ Task.prototype.getState = function(success, error) {
    this.chan.call({method: "task.getState",
       error: error,
       success: success,
-      timeout: 1000
+      timeout: 2000
    });
 };
 
@@ -247,7 +247,7 @@ Task.prototype.reloadState = function(state, success, error) {
       params: state,
       error: error,
       success: success,
-      timeout: 1000
+      timeout: 2000
    });
 };
 
@@ -256,7 +256,7 @@ Task.prototype.getViews = function(success, error) {
    this.chan.call({method: "task.getViews",
       error: error,
       success: success,
-      timeout: 1000
+      timeout: 2000
    });
 };
 
@@ -266,7 +266,7 @@ Task.prototype.showViews = function(views, success, error) {
       params: views,
       error: error,
       success: success,
-      timeout: 1000
+      timeout: 2000
    });
 };
 
