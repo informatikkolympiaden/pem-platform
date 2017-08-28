@@ -201,8 +201,9 @@ window.TaskProxyManager = {
       delete(TaskProxyManager.tasks[idFrame]);
       delete(TaskProxyManager.platforms[idFrame]);
    },
-   getUrl: function(taskUrl, sToken, sPlatform, prefix) {
-      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform);
+   getUrl: function(taskUrl, sToken, sPlatform, prefix, sLanguage) {
+      if(!sLanguage) { sLanguage = 'fr'; }
+      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'&sLanguage='+encodeURIComponent(sLanguage);
    }
 };
 
