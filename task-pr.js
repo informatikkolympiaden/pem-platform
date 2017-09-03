@@ -201,9 +201,10 @@ window.TaskProxyManager = {
       delete(TaskProxyManager.tasks[idFrame]);
       delete(TaskProxyManager.platforms[idFrame]);
    },
-   getUrl: function(taskUrl, sToken, sPlatform, prefix, sLanguage) {
-      if(!sLanguage) { sLanguage = 'fr'; }
-      return taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'&sLanguage='+encodeURIComponent(sLanguage);
+   getUrl: function(taskUrl, sToken, sPlatform, prefix, sLocale) {
+      var url = taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform);
+      if(sLocale) { url += '&sLocale='+encodeURIComponent(sLocale); }
+      return url;
    }
 };
 

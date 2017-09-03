@@ -57,7 +57,7 @@ var TaskProxyManager = {
       delete(TaskProxyManager.tasks[idFrame]);
       delete(TaskProxyManager.platforms[idFrame]);
    },
-   getUrl: function(taskUrl, sToken, sPlatform, prefix, sLanguage) {
+   getUrl: function(taskUrl, sToken, sPlatform, prefix, sLocale) {
       var channelId = (prefix ? prefix : '')+this.getRandomID();
       if (taskUrl.indexOf('?') == -1) {
          // the idea is not to change the base url even if we change token, so we put token after #
@@ -65,8 +65,9 @@ var TaskProxyManager = {
       } else {
          taskUrl = taskUrl + '&';
       }
-      if(!sLanguage) { sLanguage = 'fr'; }
-      return taskUrl+'sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'&channelId='+encodeURIComponent(channelId)+'&sLanguage='+encodeURIComponent(sLanguage);
+      var url = taskUrl+'sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform)+'&channelId='+encodeURIComponent(channelId);
+      if(sLocale) { url += '&sLocale='+encodeURIComponent(sLocale); }
+      return url;
    }
 };
 
