@@ -136,8 +136,8 @@ function Task(iframe, success, error) {
          self.platform.askHint(hintToken, trans.complete, trans.error);
          trans.delayReturn(true);
       });
-      this.chan.bind('platform.updateHeight', function (trans, height) {
-         self.platform.updateHeight(height, trans.complete, trans.error);
+      this.chan.bind('platform.updateDisplay', function (trans, data) {
+         self.platform.updateDisplay(data, trans.complete, trans.error);
          trans.delayReturn(true);
       });
       this.chan.bind('platform.openUrl', function (trans, url) {
@@ -145,6 +145,12 @@ function Task(iframe, success, error) {
          trans.delayReturn(true);
       });
       self.platformSet = true;
+
+      // Legacy calls
+      this.chan.bind('platform.updateHeight', function (trans, height) {
+         self.platform.updateDisplay({ height: height }, trans.complete, trans.error);
+         trans.delayReturn(true);
+      });
    };
 }
 
@@ -289,7 +295,7 @@ Task.prototype.gradeAnswer = function(answer, answerToken, success, error) {
       params: [answer, answerToken],
       error: error,
       success: newSuccess,
-      timeout: 30000
+      timeout: window.gradeAnswerTimeoutVal ? window.gradeAnswerTimeoutVal : 40000
    });
 };
 
@@ -326,7 +332,12 @@ Platform.prototype.getTask = function() {
 Platform.prototype.validate = function(mode, success, error) {error('platform.validate is not defined');};
 Platform.prototype.showView = function(views, success, error) {error('platform.validate is not defined');};
 Platform.prototype.askHint = function(platformToken, success, error) {error('platform.validate is not defined');};
-Platform.prototype.updateHeight = function(height, success, error) {this.task.iframe.height(parseInt(height)+40);success();};
+Platform.prototype.updateHeight = function(height, success, error) { this.updateDisplay({height: height}); };
+Platform.prototype.updateDisplay = function(data, success, error) {
+   if(data.height) {
+      this.task.iframe.height(parseInt(height)+40);success();
+   }
+};
 Platform.prototype.openUrl = function(url, success, error) {error('platform.openUrl is not defined!');};
 Platform.prototype.getTaskParams = function(key, defaultValue, success, error) {
    var res = {minScore: -3, maxScore: 10, randomSeed: 0, noScore: 0, readOnly: false, options: {}};
