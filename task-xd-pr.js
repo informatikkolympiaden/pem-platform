@@ -92,7 +92,7 @@ function Task(iframe, success, error) {
    }
    var nbSecs = 0;
    var checkInterval = setInterval(function() {
-      if (nbSecs > 15) {
+      if (nbSecs > 300) {
          error();
          clearInterval(checkInterval);
          checkInterval = null;
