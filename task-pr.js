@@ -2,7 +2,7 @@
 
 'use strict';
 
-/* 
+/*
  * Same domain task proxy implementation for Bebras task API - v1.0 - 08/2014
  *
  * Depends on jQuery.
@@ -88,7 +88,7 @@ function Task(iframe, callback) {
       if (that.platform) {
          that.distantPlatform.setPlatform(that.platform);
       }
-      callback();    
+      callback();
    };
    // checking if platform is already available
    var iframeDoc = that.iframe[0].contentDocument || that.iframe[0].contentWindow.document;
@@ -223,7 +223,7 @@ Platform.prototype.getTask = function() {
    return this.task;
 };
 
-/* 
+/*
  * Simple prototypes for platform API functions, to be overriden by your
  * platform's specific functions (for each platform object)
  */
@@ -254,3 +254,5 @@ Platform.prototype.getTaskParams = function(key, defaultValue, success, error) {
 Platform.prototype.openUrl = function(url) {
    // TODO
 };
+
+window.Platform = Platform;

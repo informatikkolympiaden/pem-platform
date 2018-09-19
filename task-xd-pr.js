@@ -19,7 +19,7 @@
  * Global objects
  */
 
-var TaskProxyManager = {
+window.TaskProxyManager = {
    tasks: {},
    platforms: {},
    getRandomID: function() {
@@ -352,3 +352,5 @@ Platform.prototype.getTaskParams = function(key, defaultValue, success, error) {
    }
    success(res);
 };
+
+window.Platform = Platform;
