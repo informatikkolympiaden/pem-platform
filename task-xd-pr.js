@@ -178,7 +178,6 @@ Task.prototype.load = function(views, success, error) {
    if (!error) error = function(errMsg) {console.error(errMsg)};
    this.chan.call({method: "task.load",
       params: views,
-      timeout: 300000,
       success: success,
       error: error
    });
