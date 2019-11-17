@@ -11,6 +11,8 @@
 
 var functionsToTrigger = {load: true, unload:true, reloadAnswer:true, showViews: true, reloadState: true};
 
+var taskProxyLoadListener = null;
+
 function taskCaller(task, request, content, error) {
    if (!error) {
       error = function() {};
@@ -77,6 +79,7 @@ function Task(iframe, callback) {
          this.distantPlatform.setPlatform(platform);
       }
    };
+   var loadEventId = null;
    this.iframeLoaded = function() {
       if (that.iframe_loaded) {
          return;
@@ -87,6 +90,9 @@ function Task(iframe, callback) {
       that.iframe[0].contentWindow.platform.parentLoadedFlag = true;
       if (that.platform) {
          that.distantPlatform.setPlatform(that.platform);
+      }
+      if(loadEventId) {
+         taskProxyLoadListener(loadEventId, 'ready');
       }
       callback();
    };
@@ -103,6 +109,14 @@ function Task(iframe, callback) {
          setTimeout(function() {
             that.iframeLoaded();
          }, 100);
+      }
+      if(taskProxyLoadListener) {
+         // If it wasn't loaded, log details
+         loadEventId = Math.floor(Math.random() * 100000);
+         taskProxyLoadListener(loadEventId, 'notready', !!iframeDoc + ',' + iframeDoc.readyState + ',' + !!that.iframe[0].contentWindow.platform + ',' + !that.iframe[0].contentWindow.platform.parentLoadedFlag + ';listener:' + !!document.addEventListener);
+         setTimeout(function () {
+            taskProxyLoadListener(loadEventId, 'notready2', !!iframeDoc + ',' + iframeDoc.readyState + ',' + !!that.iframe[0].contentWindow.platform + ',' + !that.iframe[0].contentWindow.platform.parentLoadedFlag + ';listener:' + !!document.addEventListener);
+         }, 1000);
       }
    }
 }
@@ -205,6 +219,11 @@ window.TaskProxyManager = {
       var url = taskUrl+'?sToken='+encodeURIComponent(sToken)+'&sPlatform='+encodeURIComponent(sPlatform);
       if(sLocale) { url += '&sLocale='+encodeURIComponent(sLocale); }
       return url;
+   },
+   bindListener: function(listener) {
+      // (Temporary?) function to bind a listener, which will be called when
+      // some load events happen
+      taskProxyLoadListener = listener;
    }
 };
 
