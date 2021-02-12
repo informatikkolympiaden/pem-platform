@@ -144,6 +144,10 @@ function Task(iframe, success, error) {
          self.platform.openUrl(url, trans.complete, trans.error);
          trans.delayReturn(true);
       });
+      this.chan.bind('platform.log', function (trans, data) {
+         platform.log(data, trans.complete, trans.error);
+         trans.delayReturn(true);
+      });
       self.platformSet = true;
 
       // Legacy calls
@@ -338,6 +342,7 @@ Platform.prototype.updateDisplay = function(data, success, error) {
    }
 };
 Platform.prototype.openUrl = function(url, success, error) {error('platform.openUrl is not defined!');};
+Platform.prototype.log = function(data) {error('platform.log is not defined!');};
 Platform.prototype.getTaskParams = function(key, defaultValue, success, error) {
    var res = {minScore: -3, maxScore: 10, randomSeed: 0, noScore: 0, readOnly: false, options: {}};
    if (key) {
