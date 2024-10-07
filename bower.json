@@ -14,6 +14,6 @@
    "license": "MIT",
    "dependencies": {
       "jquery": "*",
-      "jschannel": "*"
+      "jschannel": "lucasconstantino/jschannel#bce5c2c6356a15f14655c032d99a4a314156cc70"
    }
 }
